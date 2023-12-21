@@ -1,0 +1,59 @@
+from google.colab import drive
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+drive.mount('/content/drive/')
+data = pd.read_csv('/content/drive/MyDrive/unemployment.csv')
+
+data.info()
+
+data.describe()
+
+print(data.isnull().sum())
+
+data.columns = ["Region", "Date", "Frequency","Estimated Unemployment Rate",
+                "Estimated Employed", "Estimated Labour Participation Rate",
+                "Region.1", "longitude", "latitude"]
+
+plt.figure(figsize = (13,13))
+sns.heatmap(data.corr())
+plt.show()
+
+data = pd.DataFrame(data)
+y = data['Estimated Unemployment Rate']
+x = data['Region']
+pr = plt.figure(figsize = (35, 15))
+plt.xlabel("Region", fontsize = 20)
+plt.ylabel("Estimated Unemployment Rate", fontsize = 20)
+plt.xticks(fontweight = 'bold', rotation = 'vertical', fontsize = 20)
+plt.bar(x, y,  color = 'b',align = 'center')
+plt.show()
+
+data = pd.DataFrame(data)
+y = data['Estimated Employed']
+x = data['Region']
+pr = plt.figure(figsize = (30,10))
+plt.xlabel("Region", fontsize = 30)
+plt.ylabel("Estimated Employment Rate", fontsize = 20)
+plt.bar(x, y, color = 'r', align = 'center')
+plt.show()
+
+plt.figure(figsize = (15,15))
+plt.title("Graph to show Unemployment Rate in India")
+sns.histplot(x = "Estimated Unemployment Rate", hue = "Region", data = data)
+plt.show()
+
+plt.figure(figsize = (15,15))
+plt.title("Graph to show Employment Rate in India")
+sns.histplot(x = "Estimated Labour Participation Rate", hue = "Region", data = data)
+plt.show()
+
+import plotly.express as px
+unemployment = data[["Region", 'Region.1', "Estimated Unemployment Rate"]]
+figure = px.sunburst(unemployment, path = ["Region.1", "Region"],
+                     values = "Estimated Unemployment Rate",
+                     width = 900, height = 900, color_continuous_scale = "RdYIGn",
+                     title = "Unemployment Rate in India")
+figure.show()
